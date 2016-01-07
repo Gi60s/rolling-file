@@ -1,0 +1,31 @@
+{
+  "name": "rolling-file",
+  "version": "1.0.0",
+  "description": "Write to a file until limits you defined are reached, after which a new file is created to and written to until its limits are reached, and so on.",
+  "main": "index.js",
+  "bin": {
+    "rolling-file": "rolling-file.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "tests/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gi60s/rolling-file.git"
+  },
+  "keywords": [
+    "file",
+    "stream",
+    "rolling",
+    "log",
+    "logger"
+  ],
+  "author": "James Speirs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gi60s/rolling-file/issues"
+  },
+  "homepage": "https://github.com/Gi60s/rolling-file#readme"
+}
