@@ -2,7 +2,7 @@
 // Manages a file write stream that automatically creates a new file once the file size limit has been reached.
 var fs          = require('fs');
 var path        = require('path');
-var rfPath      = require('./rolling-file-path');
+var rfPath      = require('./rolling-file-name');
 
 var rxTime = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/;
 var rxNumUnit = /^(\d+(?:\.\d+)?) *([kmgtpezy])?/i;
