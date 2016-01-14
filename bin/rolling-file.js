@@ -1,8 +1,113 @@
 "use strict";
 // Manages a file write stream that automatically creates a new file once the file size limit has been reached.
+var CustomError = require('custom-error-instance');
+var dirFiles    = require('./directory-files');
 var fs          = require('fs');
 var path        = require('path');
-var rfPath      = require('./rolling-file-name');
+var rfName      = require('./rolling-file-name');
+var schema      = require('./rolling-file-schema');
+
+var Err = CustomError('RollingFileError');
+Err.extend('terminal', { message: 'The datastream is terminal and cannot be written to.', code: 'ETERM' });
+Err.extend('overflow', { message: 'Data to write exceeds max file size.', code: 'EOVER' });
+
+module.exports = function(directoryPath, configuration) {
+    var activeFilePath;
+    var buffer = [];
+    var config = schema.normalize(options);
+    var delimiterLength = config.delimiter.length;
+    var factory = {};
+    var findingPath = false;
+    var size = 0;
+    var stream;
+    var terminal;
+
+    function createNewStream() {
+        if (!findingPath) {
+            findingPath = dirFiles(directoryPath)
+                .then(function(fileNames) {
+                    var fileName = rfName(fileNames, config);
+                    var fullPath;
+                    var item;
+                    var wrote;
+
+                    // get the write stream file path
+                    if (fileName === activeFilePath) fileName = rfName.increment(fileName);
+                    fullPath = path.resolve(directoryPath, fileName);
+
+                    // set globals to initial write state
+                    activeFilePath = fullPath;
+                    findingPath = false;
+                    size = 0;
+                    stream = fs.createWriteStream(fullPath, { flags: 'a', encoding: config.fileEncoding });
+
+                    //empty the buffer into the stream
+                    while (stream && buffer.length > 0) {
+                        item = buffer[0];
+                        wrote = write(item.data, item.callback, false);
+                        if (wrote) buffer.shift();
+                    }
+                });
+        }
+    }
+
+    function write(data, callback, writeToBuffer) {
+        var len;
+        var newData;
+        var newSize;
+
+        // if the stream is closed then open a stream and write to the buffer
+        if (!stream) {
+            if (!findingPath) createNewStream();
+            if (writeToBuffer) buffer.push({ data: data, callback: callback });
+            return false;
+        }
+
+        // determine space requirements
+        newData = size > 0 ? config.delimiter + data : data;
+        len = data.length;
+        newSize = size + len;
+
+        // if the data size is greater than max file size then throw an error
+        if (len > config.byteLimit) {
+            if (typeof callback === 'function') callback(new Err.overflow());
+            return true;
+        }
+
+        // if the remaining file space wont fit the content then start a new stream
+        if (newSize > config.byteLimit) {
+            stream = null;
+            createNewStream();
+            buffer.push({ data: data, callback: callback });
+            return false;
+        }
+
+        // write to the active stream
+        stream.write(newData, callback);
+        return true;
+    }
+
+    factory.write = function(data, callback) {
+        if (!terminal) {
+            write(data, callback, true);
+        } else if (typeof callback === 'function') {
+            callback(new Err.terminal());
+        }
+    };
+
+    factory.end = function(data, callback) {
+        factory.write(data, callback);
+        terminal = true;
+    };
+
+    return factory;
+};
+
+
+
+
+
+
 
 var rxTime = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/;
 var rxNumUnit = /^(\d+(?:\.\d+)?) *([kmgtpezy])?/i;

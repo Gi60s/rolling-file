@@ -11,6 +11,10 @@ var mkDir = Promise.promisify(fs.mkdir);
 describe('directory-files', function() {
     var directory = path.resolve(__dirname, 'temp');
 
+    after(function() {
+        return randomFs.wipe(directory);
+    });
+
     beforeEach(function() {
         return randomFs.wipe(directory)
             .then(function() {

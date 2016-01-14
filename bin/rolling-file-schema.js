@@ -18,13 +18,11 @@ module.exports = schemata({
             return is.string(value) && rxNumUnit.test(value);
         }
     },
-    interval: {
-        description: 'If specified then file names will have time component of the file name limited to valid intervals.',
-        help: 'The value must be a number, optionally followed by S (seconds), M (minutes), H (hours), D (days). ' +
-        'If not followed by one of those options then milliseconds will be the assumed unit.',
-        transform: getTimeDuration,
-        validate: function(value, is) {
-            return is.string(value) && rxTimeUnit.test(value);
+    delimiter: {
+        description: 'The character to use to separate entries into the rolling file.',
+        defaultValue: '\n',
+        transform: function(value) {
+            return '' + value;
         }
     },
     fileEncoding: {
@@ -54,6 +52,15 @@ module.exports = schemata({
         help: 'The value must be a string that is a file path to an existing directory.',
         validate: function(value, is) {
             return is.string(value);
+        }
+    },
+    interval: {
+        description: 'If specified then file names will have time component of the file name limited to valid intervals.',
+        help: 'The value must be a number, optionally followed by S (seconds), M (minutes), H (hours), D (days). ' +
+        'If not followed by one of those options then milliseconds will be the assumed unit.',
+        transform: getTimeDuration,
+        validate: function(value, is) {
+            return is.string(value) && rxTimeUnit.test(value);
         }
     },
     startOfDay: {
