@@ -1,6 +1,6 @@
 # rolling-file
 
-Write to a file until limits you defined are reached, after which a new file is created to and written to until its limits are reached, and so on. Writing is done using write streams.
+Write to a file until limits you've defined are reached, after which a new file is created to and written to until its limits are reached, and so on. Writing is done using write streams.
 
 ## Installation
 
