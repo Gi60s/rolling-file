@@ -1,6 +1,6 @@
 # rolling-file
 
-Write to a file until limits you've defined are reached, after which a new file is created to and written to until its limits are reached, and so on. Writing is done using write streams.
+Write to a file until limits you've defined are reached, after which a new file is created and written to until its limits are reached, and so on. Writing is done using write streams.
 
 ## Installation
 
@@ -43,7 +43,7 @@ f.write('Hello, World!');
  - **directory** - A required string that gives the directory path of where log files should be deposited.
  - **configuration** - A optional object that defines how the file rolling should occur.
  
- **Returns:** An object with properties for writing to the data stream.
+**Returns:** An object with properties for writing to the data stream.
 
 ## Configuration
 
