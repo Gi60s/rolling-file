@@ -46,10 +46,10 @@ module.exports = schemata({
         }
     },
     fileName: {
-        required: true,
         description: 'The name of the file to write to. A date suffix, and index, and and file extension will be added ' +
         'to this value. For example "data" will generate file with the name "data.2016-01-01-000000.1.log".',
         help: 'The value must be a string that is a file path to an existing directory.',
+        defaultValue: '',
         validate: function(value, is) {
             return is.string(value);
         }

@@ -36,12 +36,11 @@ f.write('Hello, World!');
 
 ## API
 
-### rollingFile ( directory, fileName [, configuration ] )
+### rollingFile ( directory, [, configuration ] )
 
 **Parameters:**
 
  - **directory** - A required string that gives the directory path of where log files should be deposited.
- - **fileName** - A required string that specifies the file name prefix.
  - **configuration** - A optional object that defines how the file rolling should occur.
  
  **Returns:** An object with properties for writing to the data stream.
@@ -53,6 +52,7 @@ The configuration parameter has the following options:
  - **byteLimit** - The maximum size for a file in bytes before output will be put into a new file. The value must be a number, optionally followed by a metric prefix '(kilo, mega, giga, tera, peta, exa, zetta, yotta). For example: 2000000,  2G, 2 giga, 2 gigabytes, 2GB, 2000KB. The default value is 2 GB.
  - **delimiter** - The character to use to separate entries into the rolling file. The default value is '\n'.
  - **fileEncoding** - The encoding type to use on the file. All of NodeJS' encoding types are acceptable values. Defaults to 'utf8'.
+ - **fileName** - The file name prefix to add to the start of the file.
  - **fileExtension** - The extension to add to the end of the file name. By default this value is '.log'.
  - **interval** - The size of the time interval for each file.
  - **startOfDay** - The time to consider as the start of the day. This does nothing unless an interval is specified.

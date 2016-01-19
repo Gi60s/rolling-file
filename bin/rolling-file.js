@@ -16,12 +16,11 @@ var store = {};
 /**
  * Get an interface that allows endless writing to a file system.
  * @param {string} directoryPath
- * @param {string} fileName
  * @param {object} [configuration]
  * @returns {object}
  */
-module.exports = function(directoryPath, fileName, configuration) {
-    var config = schema.normalize(Object.assign({ fileName: fileName }, configuration || {}));
+module.exports = function(directoryPath, configuration) {
+    var config = schema.normalize(configuration || {});
     var key = directoryPath + JSON.stringify(config);
     if (!store.hasOwnProperty(key)) store[key] = getFactory(directoryPath, configuration);
     return store[key];

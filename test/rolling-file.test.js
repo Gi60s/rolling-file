@@ -36,7 +36,7 @@ describe('rolling-file', function() {
         }
 
         return new Promise(function(resolve, reject) {
-                var f = rollingFile(directory, '', config);
+                var f = rollingFile(directory, config);
                 while (data.length > 0) f.write(data.shift());
                 f.end('', function(err) {
                     if (err) return reject(err);
@@ -78,7 +78,7 @@ describe('rolling-file', function() {
         return new Promise(function(resolve, reject) {
                 var i = 0;
                 var id;
-                var f = rollingFile(directory, '', { fileName: '', delimiter: '', interval: '1 second' });
+                var f = rollingFile(directory, { fileName: '', delimiter: '', interval: '1 second' });
 
                 id = setInterval(function() {
                     f.write(i);
