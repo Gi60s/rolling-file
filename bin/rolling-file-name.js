@@ -66,11 +66,9 @@ FileName.fileName = function(configuration, date, index) {
     result += dateString(date);
 
     // add index
-    if (config.interval && config.byteLimit) {
-        if (arguments.length < 3) index = 0;
-        if (isNaN(index)) throw new Err.index('File path index parameter must be a number when included in parameters.');
-        result += '.' + index;
-    }
+    if (arguments.length < 3) index = 0;
+    if (isNaN(index)) throw new Err.index('File path index parameter must be a number when included in parameters.');
+    result += '.' + index;
 
     // add the file extension
     if (config.fileExtension) result += '.' + config.fileExtension;

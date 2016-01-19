@@ -13,19 +13,19 @@ describe('rolling-file-path', function() {
             var config = { fileName: 'foo' };
 
             var store = [
-                'foo.2000-01-01-090000.log',
-                'foo.2000-01-01-100000.log',
-                'foo.2000-01-01-110000.log'
+                'foo.2000-01-01-090000.0.log',
+                'foo.2000-01-01-100000.0.log',
+                'foo.2000-01-01-110000.0.log'
             ];
 
             it('finds existing', function() {
                 var date = new Date(2000, 0, 1, 10, 0, 0);
-                expect(rfName(store, config, date)).to.be.equal('foo.2000-01-01-100000.log');
+                expect(rfName(store, config, date)).to.be.equal('foo.2000-01-01-100000.0.log');
             });
 
             it('creates new', function() {
                 var date = new Date(2000, 0, 1, 12, 0, 0);
-                expect(rfName(store, config, date)).to.be.equal('foo.2000-01-01-120000.log');
+                expect(rfName(store, config, date)).to.be.equal('foo.2000-01-01-120000.0.log');
             });
         });
 
@@ -154,12 +154,12 @@ describe('rolling-file-path', function() {
 
             it('empty string passes', function() {
                 var config = { fileName: '' };
-                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.log');
+                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.0.log');
             });
 
             it('non-empty string passes', function() {
                 var config = { fileName: 'hello' };
-                expect(rfName.fileName(config, d)).to.be.equal('hello.2000-01-01-000000.log');
+                expect(rfName.fileName(config, d)).to.be.equal('hello.2000-01-01-000000.0.log');
             });
 
         });
@@ -179,34 +179,16 @@ describe('rolling-file-path', function() {
 
             it('empty string passes', function() {
                 var config = { fileName: '', fileExtension: '' };
-                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000');
+                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.0');
             });
 
             it('non-empty string passes', function() {
                 var config = { fileName: '', fileExtension: 'hello' };
-                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.hello');
+                expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.0.hello');
             });
         });
 
-        describe('no interval means no index in path', function() {
-
-            var config = { fileName: 'database' };
-            var d = new Date(2000, 0, 1, 11, 20, 35);
-
-            it('ignores omission', function() {
-                expect(rfName.fileName(config, d)).to.be.equal('database.2000-01-01-112035.log');
-            });
-
-            it('ignores number', function() {
-                expect(rfName.fileName(config, d, 0)).to.be.equal('database.2000-01-01-112035.log');
-            });
-
-            it('ignores other', function() {
-                expect(rfName.fileName(config, d, 'foo')).to.be.equal('database.2000-01-01-112035.log');
-            });
-        });
-
-        describe('interval means index in path', function() {
+        describe('indexes', function() {
             var d = new Date(2000, 0, 1, 11, 20, 35);
 
             describe('1 hour interval with multiple indexes', function() {
@@ -249,7 +231,8 @@ describe('rolling-file-path', function() {
                         fileName: 'database',
                         interval: '2 days'
                     };
-                    expect(rfName.fileName(config, d)).to.be.equal('database.2000-01-06-000000.0.log');
+                    var d = new Date(2000, 0, 6, 9, 42, 35);
+                    expect(rfName.fileName(config, d)).to.be.equal('database.2000-01-05-000000.0.log');
                 });
 
                 it('half day interval 1', function() {

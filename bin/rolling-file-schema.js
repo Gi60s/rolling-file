@@ -12,10 +12,10 @@ module.exports = schemata({
         defaultValue: '2GB',
         help: 'The value must be a number, optionally followed by a metric prefix ' +
         '(kilo, mega, giga, tera, peta, exa, zetta, yotta). For example: ' +
-        '2000000 2G, 2 giga, 2 gigabytes, 2GB, 2000KB.',
+        '2000000, 2G, 2 giga, 2 gigabytes, 2GB, 2000KB.',
         transform: getByteSize,
         validate: function(value, is) {
-            return is.string(value) && rxNumUnit.test(value);
+            return (is.number(value) && !is.nan(value) && value > 0) || (is.string(value) && rxNumUnit.test(value));
         }
     },
     delimiter: {
@@ -82,6 +82,8 @@ function getByteSize(value) {
     var num;
     var options = ['k', 'm', 'g', 't', 'p', 'e', 'z', 'y'];
     var unit;
+
+    if (typeof value === 'number') return Math.round(value);
 
     match = rxNumUnit.exec(value);
     num = parseFloat(match[1]);
