@@ -232,7 +232,7 @@ describe('rolling-file-path', function() {
                         interval: '2 days'
                     };
                     var d = new Date(2000, 0, 6, 9, 42, 35);
-                    expect(rfName.fileName(config, d)).to.be.equal('database.2000-01-05-000000.0.log');
+                    expect(rfName.fileName(config, d)).to.be.equal('database.2000-01-06-000000.0.log');
                 });
 
                 it('half day interval 1', function() {
