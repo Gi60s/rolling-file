@@ -75,7 +75,8 @@ describe('rolling-file', function() {
     });
 
     it('time limit', function() {
-        return new Promise(function(resolve, reject) {
+        return new Promise(
+            function(resolve, reject) {
                 var i = 0;
                 var id;
                 var f = rollingFile(directory, { fileName: '', delimiter: '', interval: '1 second' });

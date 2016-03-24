@@ -10,6 +10,7 @@
     "bluebird": "^3.1.1",
     "chokidar": "^1.4.2",
     "custom-error-instance": "^1.1.1",
+    "moment": "^2.12.0",
     "object-schemata": "^1.0.0",
     "sinon": "^1.17.2"
   },

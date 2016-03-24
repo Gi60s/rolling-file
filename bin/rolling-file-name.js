@@ -1,6 +1,7 @@
 "use strict";
 var CustomError = require('custom-error-instance');
 var schema      = require('./rolling-file-schema');
+var moment      = require('moment');
 
 var Err = CustomError('RollingPathError');
 Err.extend('index', { code: 'EINDEX'});
@@ -15,11 +16,12 @@ module.exports = FileName;
  * one is not found then a new file name will be generated.
  * @param {string[]} fileNames
  * @param {object} configuration
+ * @param {Date} [date]
  * @returns {string}
  */
 function FileName(fileNames, configuration, date) {
     var matches;
-    if (!date || !(date instanceof Date)) date = new Date();
+    if (!date || !(moment.isDate(date) || moment.isMoment(date))) date = new Date();
     matches = FileName.matches(fileNames, configuration, date);
     return matches.length > 0 ? matches.pop().full :  FileName.fileName(configuration, date, 0);
 }
@@ -36,7 +38,7 @@ FileName.components = function(fileName) {
     match = rx.exec(fileName);
     if (!match) return null;
     return {
-        date: stringDate(match[2]),
+        date: moment(match[2], 'YYYY-MM-DD-HHmmss').toDate(),
         dateString: match[2],
         extension: match[4],
         full: fileName,
@@ -108,7 +110,7 @@ FileName.matches = function(fileNames, configuration, date) {
         var match = ((!config.fileName && typeof o.fileName === 'undefined') || config.fileName === o.fileName) &&
             ((!config.fileExtension && typeof o.extension === 'undefined') || config.fileExtension === o.extension) &&
             ((!config.interval && typeof o.index === 'undefined') || (config.interval && typeof o.index !== 'undefined')) &&
-            (!config.interval || stringDate(o.dateString).getTime() % config.interval === config.startOfDay) &&
+            (!config.interval || moment(o.dateString, 'YYYY-MM-DD-HHmmss').toDate().getTime() % config.interval === config.startOfDay) &&
             (!dtString || dtString === o.dateString);
         if (match) results.push(o);
     });
@@ -123,22 +125,17 @@ FileName.matches = function(fileNames, configuration, date) {
  * @returns {string}
  */
 function dateString(date) {
-    return date.getFullYear() + '-' +
-        leadingZeros(date.getMonth() + 1, 2) + '-' +
-        leadingZeros(date.getDate(), 2) + '-' +
-        leadingZeros(date.getHours(), 2) +
-        leadingZeros(date.getMinutes(), 2) +
-        leadingZeros(date.getSeconds(), 2);
+    return moment(date).format('YYYY-MM-DD-HHmmss')
 }
 
 /**
  * Get a number that represents milliseconds for the start of the day.
  * @returns {number}
  */
-function getStartOfDay() {
-    var ms = Date.now();
-    var msPerDay = 86400 * 1000;
-    return ms - (ms % msPerDay) + ((new Date).getTimezoneOffset() * 60 * 1000);
+function getStartOfDay(date) {
+    var ms = date.valueOf();
+    var msPerDay = 86400000;
+    return ms - (ms % msPerDay) + date.getTimezoneOffset() * 60000;
 }
 
 /**
@@ -149,51 +146,7 @@ function getStartOfDay() {
  */
 function intervalDate(date, config) {
     var now = typeof date === 'number' ? date : date.getTime();
-    var startOfDay = getStartOfDay() + config.startOfDay;
+    var startOfDay = getStartOfDay(date) + config.startOfDay;
     var interval = Math.floor((now - startOfDay) / config.interval);
     return new Date(new Date(startOfDay).getTime() + interval * config.interval);
-}
-
-/**
- * Convert string to date.
- * @param str
- * @returns {Date}
- */
-function stringDate(str) {
-    return new Date(
-        parseInt(str.substr(0, 4)),
-        parseInt(str.substr(5, 2)) - 1,
-        parseInt(str.substr(8, 2)),
-        parseInt(str.substr(11, 2)),
-        parseInt(str.substr(13, 2)),
-        parseInt(str.substr(15, 2))
-    );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Add leading zero's to a value
- * @params {*} value
- * @params {number} length
- * @returns {string}
- */
-function leadingZeros(value, length) {
-    value = value + '';
-    while (value.length < length) {
-        value = '0' + value;
-    }
-    return value;
 }
