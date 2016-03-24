@@ -16,6 +16,10 @@ npm install rolling-file
 var rollingFile = require('rolling-file');
 var f = rollingFile('./logs', { fileName: 'foo', byteLimit: '500 MB' });
 f.write('Hello, World!');
+
+...
+
+f.end();
 ```
 
 ### Roll by Time Interval
@@ -24,6 +28,10 @@ f.write('Hello, World!');
 var rollingFile = require('rolling-file');
 var f = rollingFile('./logs', { fileName: 'foo', interval: '1 day' });
 f.write('Hello, World!');
+
+...
+
+f.end();
 ```
 
 ### Roll by File Size and Time Interval
@@ -32,6 +40,10 @@ f.write('Hello, World!');
 var rollingFile = require('rolling-file');
 var f = rollingFile('./logs', { fileName: 'foo', byteLimit: '500 MB', interval: '1 day' });
 f.write('Hello, World!');
+
+...
+
+f.end();
 ```
 
 ## API
@@ -43,7 +55,10 @@ f.write('Hello, World!');
  - **directory** - A required string that gives the directory path of where log files should be deposited.
  - **configuration** - A optional object that defines how the file rolling should occur.
  
-**Returns:** An object with properties for writing to the data stream.
+**Returns:** An object with properties for writing to the data stream:
+
+* **end ( [ content [ , callback ] ] )** - End the rolling file stream, optionally proving content and a callback function that will be called when the content has been written.
+* **write ( content [ , callback ] )** - Write content to the rolling file stream, optionally proving a callback function that will be called when the content has been written.
 
 ## Configuration
 
