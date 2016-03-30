@@ -12,6 +12,7 @@ var readFile = Promise.promisify(fs.readFile);
 var stat = Promise.promisify(fs.stat);
 
 describe('rolling-file', function() {
+    this.timeout(20000);
     var directory = path.resolve(__dirname, 'temp-rf');
 
     after(function() {

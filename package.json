@@ -4,17 +4,16 @@
   "description": "Write to a file until limits you define are reached, after which a new file is created to and written to until its limits are reached, and so on.",
   "main": "index.js",
   "scripts": {
-    "test": "tests/index.js"
+    "test": "mocha"
   },
   "dependencies": {
     "bluebird": "^3.1.1",
-    "chokidar": "^1.4.2",
     "custom-error-instance": "^1.1.1",
     "moment": "^2.12.0",
-    "object-schemata": "^1.0.0",
-    "sinon": "^1.17.2"
+    "object-schemata": "^1.0.0"
   },
   "devDependencies": {
+    "sinon": "^1.17.2",
     "chai": "^3.4.1",
     "mocha": "^2.3.4",
     "random-fs": "^1.0.3"
