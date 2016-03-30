@@ -46,7 +46,7 @@ describe('directory-files', function() {
                 return directoryFiles(directory);
             })
             .then(function(foundFiles) {
-                expect(foundFiles).to.be.deep.equal(addedFiles);
+                expect(foundFiles.sort()).to.be.deep.equal(addedFiles.sort());
             });
     });
 
