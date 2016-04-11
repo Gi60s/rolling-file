@@ -63,6 +63,10 @@ describe('rolling-file-path', function() {
 
     describe('#components', function() {
 
+        it('null for a non-matching file', function() {
+            expect(rfName.components('qwe')).to.be.null;
+        });
+
         it('no filename, no index, no extension', function() {
             var o = rfName.components('2000-01-01-000000');
             expect(o.date.getTime()).to.equal(new Date(2000, 0, 1, 0, 0, 0).getTime());
@@ -320,6 +324,11 @@ describe('rolling-file-path', function() {
             expect(function() { rfName.increment(null); }).to.throw(Error);
         });
 
+        it('non-rolling-file file name', function() {
+            var fileName = 'stdout.log';
+            expect(rfName.increment(fileName)).to.be.equal(fileName);
+        });
+
         it('file name without index', function() {
             var fileName = 'foo.2000-01-01-000000.bar';
             expect(rfName.increment(fileName)).to.be.equal(fileName);
@@ -516,6 +525,18 @@ describe('rolling-file-path', function() {
                 final.sort();
 
                 expect(rfName.matches(final, config, date).map(mapFull)).to.deep.equal(matches);
+            });
+
+        });
+
+        describe('non rolling-file produced log files', function() {
+
+            it('ignored', function() {
+                var nonMatches = [
+                    'stdout.log'
+                ];
+
+                expect(rfName.matches(nonMatches, { fileName: ''}).map(mapFull)).to.deep.equal([]);
             });
 
         });

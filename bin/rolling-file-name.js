@@ -85,7 +85,7 @@ FileName.fileName = function(configuration, date, index) {
  */
 FileName.increment = function(fileName) {
     var o = FileName.components(fileName);
-    if (typeof o.index === 'undefined') return fileName;
+    if (!o || typeof o.index === 'undefined') return fileName;
     return (o.fileName ? o.fileName + '.' : '') +
         o.dateString + '.' +
         (o.index + 1) +
@@ -107,12 +107,14 @@ FileName.matches = function(fileNames, configuration, date) {
 
     fileNames.forEach(function(fileName) {
         var o = FileName.components(fileName);
-        var match = ((!config.fileName && typeof o.fileName === 'undefined') || config.fileName === o.fileName) &&
-            ((!config.fileExtension && typeof o.extension === 'undefined') || config.fileExtension === o.extension) &&
-            ((!config.interval && typeof o.index === 'undefined') || (config.interval && typeof o.index !== 'undefined')) &&
-            (!config.interval || moment(o.dateString, 'YYYY-MM-DD-HHmmss').toDate().getTime() % config.interval === config.startOfDay) &&
-            (!dtString || dtString === o.dateString);
-        if (match) results.push(o);
+        if (o) {
+            var match = ((!config.fileName && typeof o.fileName === 'undefined') || config.fileName === o.fileName) &&
+              ((!config.fileExtension && typeof o.extension === 'undefined') || config.fileExtension === o.extension) &&
+              ((!config.interval && typeof o.index === 'undefined') || (config.interval && typeof o.index !== 'undefined')) &&
+              (!config.interval || moment(o.dateString, 'YYYY-MM-DD-HHmmss').toDate().getTime() % config.interval === config.startOfDay) &&
+              (!dtString || dtString === o.dateString);
+            if (match) results.push(o);
+        }
     });
 
     return results;
