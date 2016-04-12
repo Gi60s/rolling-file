@@ -66,6 +66,7 @@ function getFactory(directoryPath, configuration) {
                         var item = buffer.shift();
                         if (typeof item.callback === 'function') item.callback(err);
                     }
+                    terminal = true;
                 });
         }
     }
