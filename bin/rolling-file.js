@@ -61,6 +61,11 @@ function getFactory(directoryPath, configuration) {
                         wrote = write(item.data, item.callback, false);
                         if (wrote) buffer.shift();
                     }
+                }, function(err) {
+                    while (buffer.length) {
+                        var item = buffer.shift();
+                        if (typeof item.callback === 'function') item.callback(err);
+                    }
                 });
         }
     }
