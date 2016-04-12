@@ -110,6 +110,41 @@ describe('rolling-file', function() {
                 expect(length).to.be.at.least(5);
             });
     });
+    
+    describe('can\'t create write stream', function() {
+        
+        it('access denied', function(done) {
+            var dirPath = path.resolve(__dirname, 'no-write');
+
+            // remove the directory if it exists
+            try {
+                fs.rmdirSync(dirPath);
+            } catch (e) {}
+
+            // make the directory without read permissions
+            fs.mkdirSync(dirPath, 0x444);
+            expect(fs.statSync(dirPath).isDirectory()).to.equal(true);
+
+            var f = rollingFile(dirPath, { fileName: '' });
+            f.write('foo', function(err) {
+                expect(err.code).to.equal('EACCES');
+                fs.rmdirSync(dirPath);
+                done();
+            });
+        });
+
+        it('directory does not exist', function(done) {
+            var dirPath = path.resolve(__dirname, 'dne');
+            try { fs.rmdirSync(dirPath); } catch (e) {}
+
+            var f = rollingFile(dirPath, { fileName: '' });
+            f.write('foo', function(err) {
+                expect(err.code).to.equal('ENOENT');
+                done();
+            });
+        });
+        
+    });
 
 });
 
