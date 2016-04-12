@@ -29,6 +29,15 @@ describe('directory-files', function() {
             });
     });
 
+    it('rejects on non-directory', function() {
+        return directoryFiles(__dirname + '/foo')
+            .then(function() {
+                throw Error('Should not have found directory.');
+            }, function(e) {
+                expect(e.code).to.equal('ENOENT');
+            });
+    });
+
     it('read populated directory', function() {
         var addedFiles = [];
         return randomFs({ path: directory, depth: 1, number: 25 })
