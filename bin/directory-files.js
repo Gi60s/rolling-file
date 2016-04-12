@@ -17,7 +17,7 @@ module.exports = function(directoryPath) {
                 promise = stat(path.resolve(directoryPath, fileName))
                     .then(function(stats) {
                         if (stats.isFile()) results.push(fileName);
-                    });
+                    }, function() {});
                 promises.push(promise);
             });
 
