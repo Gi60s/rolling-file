@@ -90,7 +90,7 @@ function getByteSize(value) {
     unit = match[2].toLowerCase();
 
     index = options.indexOf(unit);
-    return index === -1 ? num : Math.round(num * Math.pow(1000, index));
+    return index === -1 ? num : Math.round(num * Math.pow(1000, index + 1));
 }
 
 function getTimeDuration(value) {
