@@ -3,7 +3,7 @@ const CustomError         = require('custom-error-instance');
 const expect              = require('chai').expect;
 const rfName              = require('../bin/rolling-file-name');
 
-describe('rolling-file-path', function() {
+describe('rolling-file-name', function() {
 
     describe('#', function() {
 
