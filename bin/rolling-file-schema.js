@@ -1,10 +1,9 @@
 "use strict";
-var schemata    = require('object-schemata');
-var path        = require('path');
+const schemata    = require('object-schemata');
 
-var rxTime = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/;
-var rxNumUnit = /^(\d+(?:\.\d+)?) *([kmgtpezy])?/i;
-var rxTimeUnit = /^((?:\d*\.)?\d+) *([smhd])?/i;
+const rxTime = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/;
+const rxNumUnit = /^(\d+(?:\.\d+)?) *([kmgtpezy])?/i;
+const rxTimeUnit = /^((?:\d*\.)?\d+) *([smhd])?/i;
 
 module.exports = schemata({
     byteLimit: {
@@ -33,7 +32,7 @@ module.exports = schemata({
             return value.toLowerCase();
         },
         validate: function(value, is) {
-            var encodings = ['ascii', 'base64', 'binary', 'hex', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'utf8', 'utf-8'];
+            const encodings = ['ascii', 'base64', 'binary', 'hex', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'utf8', 'utf-8'];
             return is.string(value) && encodings.indexOf(value.toLowerCase()) !== -1;
         }
     },
@@ -42,7 +41,7 @@ module.exports = schemata({
         defaultValue: 'log',
         help: 'This value must be a string with only letters or numbers.',
         validate: function(value, is) {
-            return is.string(value) && /^[a-z0-9]*$/i.test(value);
+            return is.string(value);
         }
     },
     fileName: {
@@ -77,30 +76,22 @@ module.exports = schemata({
 });
 
 function getByteSize(value) {
-    var index;
-    var match;
-    var num;
-    var options = ['k', 'm', 'g', 't', 'p', 'e', 'z', 'y'];
-    var unit;
+    const options = ['k', 'm', 'g', 't', 'p', 'e', 'z', 'y'];
 
     if (typeof value === 'number') return Math.round(value);
 
-    match = rxNumUnit.exec(value);
-    num = parseFloat(match[1]);
-    unit = match[2].toLowerCase();
+    const match = rxNumUnit.exec(value);
+    const num = parseFloat(match[1]);
+    const unit = match[2].toLowerCase();
 
-    index = options.indexOf(unit);
+    const index = options.indexOf(unit);
     return index === -1 ? num : Math.round(num * Math.pow(1000, index + 1));
 }
 
 function getTimeDuration(value) {
-    var match;
-    var num;
-    var unit;
-
-    match = rxTimeUnit.exec(value);
-    num = parseFloat(match[1]);
-    unit = match[2] && match[2].toLowerCase();
+    const match = rxTimeUnit.exec(value);
+    const num = parseFloat(match[1]);
+    const unit = match[2] && match[2].toLowerCase();
 
     switch (unit) {
         case 's': return Math.round(num * 1000);
@@ -112,8 +103,8 @@ function getTimeDuration(value) {
 }
 
 function getTimeStart(value) {
-    var match = rxTime.exec(value);
-    var seconds = match[3] ? 1000 * parseInt(match[3]) : 0;
+    const match = rxTime.exec(value);
+    const seconds = match[3] ? 1000 * parseInt(match[3]) : 0;
     return 3600000 * parseInt(match[1]) +
         60000 * parseInt(match[2]) +
         seconds;

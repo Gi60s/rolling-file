@@ -1,6 +1,6 @@
 {
   "name": "rolling-file",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Write to a file until limits you define are reached, after which a new file is created to and written to until its limits are reached, and so on.",
   "main": "index.js",
   "scripts": {
@@ -13,9 +13,8 @@
     "object-schemata": "^1.0.0"
   },
   "devDependencies": {
-    "sinon": "^1.17.2",
-    "chai": "^3.4.1",
-    "mocha": "^2.3.4",
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2",
     "random-fs": "^1.0.3"
   },
   "repository": {

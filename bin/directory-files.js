@@ -1,17 +1,17 @@
 "use strict";
-var fs              = require('fs');
-var path            = require('path');
-var Promise         = require('bluebird');
+const fs              = require('fs');
+const path            = require('path');
+const Promise         = require('bluebird');
 
-var readDir = Promise.promisify(fs.readdir);
-var stat = Promise.promisify(fs.stat);
+const readDir = Promise.promisify(fs.readdir);
+const stat = Promise.promisify(fs.stat);
 
 module.exports = function(directoryPath) {
     return readDir(directoryPath)
         .then(function(fileNames) {
-            var promise;
-            var promises = [];
-            var results = [];
+            let promise;
+            const promises = [];
+            const results = [];
 
             fileNames.forEach(function(fileName) {
                 promise = stat(path.resolve(directoryPath, fileName))

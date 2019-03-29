@@ -1,17 +1,17 @@
 "use strict";
 // Manages a file write stream that automatically creates a new file once the file size limit has been reached.
-var CustomError = require('custom-error-instance');
-var dirFiles    = require('./directory-files');
-var fs          = require('fs');
-var path        = require('path');
-var rfName      = require('./rolling-file-name');
-var schema      = require('./rolling-file-schema');
+const CustomError = require('custom-error-instance');
+const dirFiles    = require('./directory-files');
+const fs          = require('fs');
+const path        = require('path');
+const rfName      = require('./rolling-file-name');
+const schema      = require('./rolling-file-schema');
 
-var Err = CustomError('RollingFileError');
+const Err = CustomError('RollingFileError');
 Err.extend('terminal', { message: 'The datastream is terminal and cannot be written to.', code: 'ETERM' });
 Err.extend('overflow', { message: 'Data to write exceeds max file size.', code: 'EOVER' });
 
-var store = {};
+const store = {};
 
 /**
  * Get an interface that allows endless writing to a file system.
@@ -20,30 +20,30 @@ var store = {};
  * @returns {object}
  */
 module.exports = function(directoryPath, configuration) {
-    var config = schema.normalize(configuration || {});
-    var key = directoryPath + JSON.stringify(config);
+    const config = schema.normalize(configuration || {});
+    const key = directoryPath + JSON.stringify(config);
     if (!store.hasOwnProperty(key)) store[key] = getFactory(directoryPath, configuration);
     return store[key];
 };
 
 function getFactory(directoryPath, configuration) {
-    var buffer = [];
-    var config = schema.normalize(configuration);
-    var end;
-    var factory = {};
-    var findingPath = false;
-    var size = 0;
-    var stream;
-    var terminal;
+    const buffer = [];
+    const config = schema.normalize(configuration);
+    const factory = {};
+    let end;
+    let findingPath = false;
+    let size = 0;
+    let stream;
+    let terminal;
 
     function createNewStream() {
         if (!findingPath) {
             findingPath = dirFiles(directoryPath)
                 .then(function(fileNames) {
-                    var fileName = rfName(fileNames, configuration);
-                    var fullPath;
-                    var item;
-                    var wrote;
+                    let fileName = rfName(fileNames, configuration);
+                    let fullPath;
+                    let item;
+                    let wrote;
 
                     // get the write stream file path
                     while (fileNames.indexOf(fileName) !== -1) fileName = rfName.increment(fileName);
@@ -63,7 +63,7 @@ function getFactory(directoryPath, configuration) {
                     }
                 }, function(err) {
                     while (buffer.length) {
-                        var item = buffer.shift();
+                        const item = buffer.shift();
                         if (typeof item.callback === 'function') item.callback(err);
                     }
                     terminal = true;
@@ -72,9 +72,9 @@ function getFactory(directoryPath, configuration) {
     }
 
     function write(data, callback, writeToBuffer) {
-        var len;
-        var newData;
-        var newSize;
+        let len;
+        let newData;
+        let newSize;
 
         // if the stream is closed then open a stream and write to the buffer
         if (!stream) {
