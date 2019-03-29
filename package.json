@@ -1,6 +1,6 @@
 {
   "name": "rolling-file",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Write to a file until limits you define are reached, after which a new file is created to and written to until its limits are reached, and so on.",
   "main": "index.js",
   "scripts": {
