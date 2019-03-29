@@ -1,19 +1,19 @@
 "use strict";
-var expect          = require('chai').expect;
-var fs              = require('fs');
-var path            = require('path');
-var Promise         = require('bluebird');
-var randomFs        = require('random-fs');
-var rollingFile     = require('../bin/rolling-file');
+const expect          = require('chai').expect;
+const fs              = require('fs');
+const path            = require('path');
+const Promise         = require('bluebird');
+const randomFs        = require('random-fs');
+const rollingFile     = require('../bin/rolling-file');
 
-var mkDir = Promise.promisify(fs.mkdir);
-var readDir = Promise.promisify(fs.readdir);
-var readFile = Promise.promisify(fs.readFile);
-var stat = Promise.promisify(fs.stat);
+const mkDir = Promise.promisify(fs.mkdir);
+const readDir = Promise.promisify(fs.readdir);
+const readFile = Promise.promisify(fs.readFile);
+const stat = Promise.promisify(fs.stat);
 
 describe('rolling-file', function() {
     this.timeout(20000);
-    var directory = path.resolve(__dirname, 'temp-rf');
+    const directory = path.resolve(__dirname, 'temp-rf');
 
     after(function() {
         return randomFs.wipe(directory);
@@ -27,17 +27,16 @@ describe('rolling-file', function() {
     });
 
     it('byte limit', function() {
-        var config = { fileName: '', delimiter: '', byteLimit: 10 };
-        var data = [];
-        var i;
+        const config = { fileName: '', delimiter: '', byteLimit: 10 };
+        const data = [];
 
         //populate data to write
-        for (i = 0; i < 36; i++) {
+        for (let i = 0; i < 36; i++) {
             data.push(i < 10 ? i : String.fromCharCode(55 + i));
         }
 
         return new Promise(function(resolve, reject) {
-                var f = rollingFile(directory, config);
+                const f = rollingFile(directory, config);
                 while (data.length > 0) f.write(data.shift());
                 f.end('', function(err) {
                     if (err) return reject(err);
@@ -51,12 +50,12 @@ describe('rolling-file', function() {
                 });
             })
             .then(function(result) {
-                var keys = Object.keys(result);
+                const keys = Object.keys(result);
 
                 expect(keys.length).to.be.equal(4);
 
                 keys.forEach(function(key, index) {
-                    var value = result[key];
+                    const value = result[key];
                     switch (index) {
                         case 0:
                             expect(value).to.be.equal('0123456789');
@@ -78,11 +77,10 @@ describe('rolling-file', function() {
     it('time limit', function() {
         return new Promise(
             function(resolve, reject) {
-                var i = 0;
-                var id;
+                let i = 0;
                 var f = rollingFile(directory, { fileName: '', delimiter: '', interval: '1 second' });
 
-                id = setInterval(function() {
+                const id = setInterval(function() {
                     f.write(i);
                     i++;
                     if (i === 10) {
@@ -98,9 +96,9 @@ describe('rolling-file', function() {
                 return readFiles(directory);
             })
             .then(function(result) {
-                var keys = Object.keys(result);
-                var length = keys.length;
-                var sum = '';
+                const keys = Object.keys(result);
+                const length = keys.length;
+                let sum = '';
 
                 keys.forEach(function(key) {
                     sum += result[key];
@@ -110,11 +108,11 @@ describe('rolling-file', function() {
                 expect(length).to.be.at.least(5);
             });
     });
-    
+
     describe('can\'t create write stream', function() {
-        
+
         it('access denied', function(done) {
-            var dirPath = path.resolve(__dirname, 'no-write');
+            const dirPath = path.resolve(__dirname, 'no-write');
 
             // remove the directory if it exists
             try {
@@ -125,7 +123,7 @@ describe('rolling-file', function() {
             fs.mkdirSync(dirPath, 0x444);
             expect(fs.statSync(dirPath).isDirectory()).to.equal(true);
 
-            var f = rollingFile(dirPath, { fileName: '' });
+            const f = rollingFile(dirPath, { fileName: '' });
             f.write('foo', function(err) {
                 expect(err.code).to.equal('EACCES');
                 fs.rmdirSync(dirPath);
@@ -134,16 +132,16 @@ describe('rolling-file', function() {
         });
 
         it('directory does not exist', function(done) {
-            var dirPath = path.resolve(__dirname, 'dne');
+            const dirPath = path.resolve(__dirname, 'dne');
             try { fs.rmdirSync(dirPath); } catch (e) {}
 
-            var f = rollingFile(dirPath, { fileName: '' });
+            const f = rollingFile(dirPath, { fileName: '' });
             f.write('foo', function(err) {
                 expect(err.code).to.equal('ENOENT');
                 done();
             });
         });
-        
+
     });
 
 });
@@ -151,14 +149,14 @@ describe('rolling-file', function() {
 
 
 function readFiles(directory) {
-    var result = {};
+    const result = {};
     return readDir(directory)
         .then(function(fileNames) {
-            var promise;
-            var promises = [];
+            let promise;
+            const promises = [];
 
             fileNames.forEach(function(fileName) {
-                var filePath = path.resolve(directory, fileName);
+                const filePath = path.resolve(directory, fileName);
                 promise = stat(filePath)
                     .then(function(stats) {
                         if (stats.isFile()) {
@@ -172,8 +170,8 @@ function readFiles(directory) {
 
             return Promise.all(promises)
                 .then(function() {
-                    var keys = Object.keys(result);
-                    var final = {};
+                    const keys = Object.keys(result);
+                    const final = {};
                     keys.sort();
                     keys.forEach(function(key) {
                         final[key] = result[key];

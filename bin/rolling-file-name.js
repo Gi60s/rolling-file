@@ -1,12 +1,13 @@
 "use strict";
-var CustomError = require('custom-error-instance');
-var schema      = require('./rolling-file-schema');
-var moment      = require('moment');
+const CustomError = require('custom-error-instance');
+const schema      = require('./rolling-file-schema');
+const moment      = require('moment');
 
-var Err = CustomError('RollingPathError');
+const Err = CustomError('RollingPathError');
 Err.extend('index', { code: 'EINDEX'});
 Err.extend('name', { message: 'Invalid file name.', code: 'ENAME'});
 
+const msPerDay = 86400000;
 
 module.exports = FileName;
 
@@ -20,9 +21,8 @@ module.exports = FileName;
  * @returns {string}
  */
 function FileName(fileNames, configuration, date) {
-    var matches;
     if (!date || !(moment.isDate(date) || moment.isMoment(date))) date = new Date();
-    matches = FileName.matches(fileNames, configuration, date);
+    const matches = FileName.matches(fileNames, configuration, date);
     return matches.length > 0 ? matches.pop().full :  FileName.fileName(configuration, date, 0);
 }
 
@@ -32,10 +32,9 @@ function FileName(fileNames, configuration, date) {
  * @returns {object}
  */
 FileName.components = function(fileName) {
-    var rx = /^(?:([ \S]*?)\.)?(\d{4}-\d{2}-\d{2}-\d{6})(?:\.(\d+))?(?:\.([ \S]*?))?$/;
-    var match;
+    const rx = /^(?:([ \S]*?)\.)?(\d{4}-\d{2}-\d{2}-\d{6})(?:\.(\d+))?(?:\.([ \S]*?))?$/;
     if (typeof fileName !== 'string') throw new Err.name();
-    match = rx.exec(fileName);
+    const match = rx.exec(fileName);
     if (!match) return null;
     return {
         date: moment(match[2], 'YYYY-MM-DD-HHmmss').toDate(),
@@ -54,8 +53,8 @@ FileName.components = function(fileName) {
  * @param {number} [index=0]
  */
 FileName.fileName = function(configuration, date, index) {
-    var config = schema.normalize(configuration);
-    var result = '';
+    const config = schema.normalize(configuration);
+    let result = '';
 
     if (config.fileName) result += config.fileName + '.';
 
@@ -84,7 +83,7 @@ FileName.fileName = function(configuration, date, index) {
  * @param fileName
  */
 FileName.increment = function(fileName) {
-    var o = FileName.components(fileName);
+    const o = FileName.components(fileName);
     if (!o || typeof o.index === 'undefined') return fileName;
     return (o.fileName ? o.fileName + '.' : '') +
         o.dateString + '.' +
@@ -101,14 +100,14 @@ FileName.increment = function(fileName) {
  * @returns {string[]}
  */
 FileName.matches = function(fileNames, configuration, date) {
-    var config = schema.normalize(configuration);
-    var dtString = date ? dateString(intervalDate(date, config)) : null;
-    var results = [];
+    const config = schema.normalize(configuration);
+    const dtString = date ? dateString(intervalDate(date, config)) : null;
+    const results = [];
 
     fileNames.forEach(function(fileName) {
-        var o = FileName.components(fileName);
+        const o = FileName.components(fileName);
         if (o) {
-            var match = ((!config.fileName && typeof o.fileName === 'undefined') || config.fileName === o.fileName) &&
+            const match = ((!config.fileName && typeof o.fileName === 'undefined') || config.fileName === o.fileName) &&
               ((!config.fileExtension && typeof o.extension === 'undefined') || config.fileExtension === o.extension) &&
               ((!config.interval && typeof o.index === 'undefined') || (config.interval && typeof o.index !== 'undefined')) &&
               (!config.interval || moment(o.dateString, 'YYYY-MM-DD-HHmmss').toDate().getTime() % config.interval === config.startOfDay) &&
@@ -135,8 +134,7 @@ function dateString(date) {
  * @returns {number}
  */
 function getStartOfDay(date) {
-    var ms = date.valueOf();
-    var msPerDay = 86400000;
+    const ms = date.valueOf();
     return ms - (ms % msPerDay) + date.getTimezoneOffset() * 60000;
 }
 
@@ -147,8 +145,8 @@ function getStartOfDay(date) {
  * @returns {Date}
  */
 function intervalDate(date, config) {
-    var now = typeof date === 'number' ? date : date.getTime();
-    var startOfDay = getStartOfDay(date) + config.startOfDay;
-    var interval = Math.floor((now - startOfDay) / config.interval);
+    const now = typeof date === 'number' ? date : date.getTime();
+    const startOfDay = getStartOfDay(date) + config.startOfDay;
+    const interval = Math.floor((now - startOfDay) / config.interval);
     return new Date(new Date(startOfDay).getTime() + interval * config.interval);
 }

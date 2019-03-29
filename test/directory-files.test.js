@@ -1,15 +1,15 @@
 "use strict";
-var directoryFiles      = require('../bin/directory-files');
-var expect              = require('chai').expect;
-var fs                  = require('fs');
-var path                = require('path');
-var Promise             = require('bluebird');
-var randomFs            = require('random-fs');
+const directoryFiles      = require('../bin/directory-files');
+const expect              = require('chai').expect;
+const fs                  = require('fs');
+const path                = require('path');
+const Promise             = require('bluebird');
+const randomFs            = require('random-fs');
 
-var mkDir = Promise.promisify(fs.mkdir);
+const mkDir = Promise.promisify(fs.mkdir);
 
 describe('directory-files', function() {
-    var directory = path.resolve(__dirname, 'temp');
+    const directory = path.resolve(__dirname, 'temp');
 
     after(function() {
         return randomFs.wipe(directory);
@@ -39,12 +39,12 @@ describe('directory-files', function() {
     });
 
     it('read populated directory', function() {
-        var addedFiles = [];
+        const addedFiles = [];
         return randomFs({ path: directory, depth: 1, number: 25 })
             .then(function(results) {
                 results.added.forEach(function(line) {
-                    var baseName;
-                    var dirName;
+                    let baseName;
+                    let dirName;
                     if (line.indexOf('[FILE]') === 0) {
                         line = line.substr(7);
                         baseName = path.basename(line);
