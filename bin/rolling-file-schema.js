@@ -41,7 +41,7 @@ module.exports = schemata({
         defaultValue: 'log',
         help: 'This value must be a string with only letters or numbers.',
         validate: function(value, is) {
-            return is.string(value) && /^[a-z0-9]*$/i.test(value);
+            return is.string(value);
         }
     },
     fileName: {

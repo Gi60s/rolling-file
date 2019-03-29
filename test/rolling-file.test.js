@@ -109,6 +109,54 @@ describe('rolling-file', function() {
             });
     });
 
+    it('complex filename and extension name', () => {
+        const config = { fileName: `a.b.c`, delimiter: '', fileExtension: `${process.pid}.log`, byteLimit: 10 };
+        const data = [];
+
+        //populate data to write
+        for (let i = 0; i < 36; i++) {
+            data.push(i < 10 ? i : String.fromCharCode(55 + i));
+        }
+
+        return new Promise(function(resolve, reject) {
+            const f = rollingFile(directory, config);
+            while (data.length > 0) f.write(data.shift());
+            f.end('', function(err) {
+                if (err) return reject(err);
+                readFiles(directory)
+                  .then(function(result) {
+                      resolve(result);
+                  })
+                  .catch(function(e) {
+                      reject(e);
+                  });
+            });
+        })
+          .then(function(result) {
+              const keys = Object.keys(result);
+
+              expect(keys.length).to.be.equal(4);
+
+              keys.forEach(function(key, index) {
+                  const value = result[key];
+                  switch (index) {
+                      case 0:
+                          expect(value).to.be.equal('0123456789');
+                          break;
+                      case 1:
+                          expect(value).to.be.equal('ABCDEFGHIJ');
+                          break;
+                      case 2:
+                          expect(value).to.be.equal('KLMNOPQRST');
+                          break;
+                      case 3:
+                          expect(value).to.be.equal('UVWXYZ');
+                          break;
+                  }
+              });
+          });
+    })
+
     describe('can\'t create write stream', function() {
 
         it('access denied', function(done) {

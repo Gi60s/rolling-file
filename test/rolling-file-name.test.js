@@ -62,7 +62,7 @@ describe('rolling-file-name', function() {
     describe('#components', function() {
 
         it('null for a non-matching file', function() {
-            expect(rfName.components('qwe')).to.be.null;
+            expect(rfName.components('qwe')).to.equal(null);
         });
 
         it('no filename, no index, no extension', function() {
@@ -188,6 +188,11 @@ describe('rolling-file-name', function() {
                 const config = { fileName: '', fileExtension: 'hello' };
                 expect(rfName.fileName(config, d)).to.be.equal('2000-01-01-000000.0.hello');
             });
+
+            it('string with dot passes', function () {
+                const config = { fileName: '', fileExtension: `${process.pid}.hello` };
+                expect(rfName.fileName(config, d)).to.be.equal(`2000-01-01-000000.0.${process.pid}.hello`);
+            })
         });
 
         describe('indexes', function() {
