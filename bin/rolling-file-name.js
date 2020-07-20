@@ -4,8 +4,8 @@ const schema      = require('./rolling-file-schema');
 const moment      = require('moment');
 
 const Err = CustomError('RollingPathError');
-Err.extend('index', { code: 'EINDEX'});
-Err.extend('name', { message: 'Invalid file name.', code: 'ENAME'});
+Err.index = CustomError(Err, { code: 'EINDEX'});
+Err.fileName = CustomError(Err, { message: 'Invalid file name.', code: 'ENAME'});
 
 const msPerDay = 86400000;
 
@@ -33,7 +33,7 @@ function FileName(fileNames, configuration, date) {
  */
 FileName.components = function(fileName) {
     const rx = /^(?:([ \S]*?)\.)?(\d{4}-\d{2}-\d{2}-\d{6})(?:\.(\d+))?(?:\.([ \S]*?))?$/;
-    if (typeof fileName !== 'string') throw new Err.name();
+    if (typeof fileName !== 'string') throw new Err.fileName();
     const match = rx.exec(fileName);
     if (!match) return null;
     return {

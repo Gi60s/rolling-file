@@ -8,8 +8,8 @@ const rfName      = require('./rolling-file-name');
 const schema      = require('./rolling-file-schema');
 
 const Err = CustomError('RollingFileError');
-Err.extend('terminal', { message: 'The datastream is terminal and cannot be written to.', code: 'ETERM' });
-Err.extend('overflow', { message: 'Data to write exceeds max file size.', code: 'EOVER' });
+Err.terminal = CustomError(Err, { message: 'The datastream is terminal and cannot be written to.', code: 'ETERM' });
+Err.overflow = CustomError(Err, { message: 'Data to write exceeds max file size.', code: 'EOVER' });
 
 const store = {};
 

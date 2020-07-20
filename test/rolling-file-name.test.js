@@ -217,7 +217,12 @@ describe('rolling-file-name', function() {
                 });
 
                 it('throw an error for non-numbers', function() {
-                    expect(function() { rfName.fileName(config, d, 'foo') }).to.throw(CustomError.RollingPathError.index);
+                    try {
+                        rfName.fileName(config, d, 'foo')
+                        throw Error('Should not be this error')
+                    } catch (err) {
+                        expect(err.code).to.equal('EINDEX')
+                    }
                 });
 
             });
