@@ -1,15 +1,12 @@
 "use strict";
 const expect          = require('chai').expect;
 const fs              = require('fs');
+const fsp             = require('../bin/fsp')
 const path            = require('path');
-const Promise         = require('bluebird');
 const randomFs        = require('random-fs');
 const rollingFile     = require('../bin/rolling-file');
 
-const mkDir = Promise.promisify(fs.mkdir);
-const readDir = Promise.promisify(fs.readdir);
-const readFile = Promise.promisify(fs.readFile);
-const stat = Promise.promisify(fs.stat);
+const { mkDir, readDir, readFile, stat } = fsp
 
 describe('rolling-file', function() {
     this.timeout(20000);
@@ -160,7 +157,7 @@ describe('rolling-file', function() {
     describe('can\'t create write stream', function() {
 
         it('access denied', function(done) {
-            const dirPath = path.resolve(__dirname, 'no-write');
+            const dirPath = path.resolve(__dirname, '..', 'no-write');
 
             // remove the directory if it exists
             try {

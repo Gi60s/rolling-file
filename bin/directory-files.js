@@ -1,10 +1,6 @@
 "use strict";
-const fs              = require('fs');
-const path            = require('path');
-const Promise         = require('bluebird');
-
-const readDir = Promise.promisify(fs.readdir);
-const stat = Promise.promisify(fs.stat);
+const { readDir, stat } = require('./fsp');
+const path = require('path');
 
 module.exports = function(directoryPath) {
     return readDir(directoryPath)

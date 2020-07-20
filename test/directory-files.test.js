@@ -1,12 +1,9 @@
 "use strict";
-const directoryFiles      = require('../bin/directory-files');
-const expect              = require('chai').expect;
-const fs                  = require('fs');
-const path                = require('path');
-const Promise             = require('bluebird');
-const randomFs            = require('random-fs');
-
-const mkDir = Promise.promisify(fs.mkdir);
+const directoryFiles      = require('../bin/directory-files')
+const expect              = require('chai').expect
+const { mkDir }           = require('../bin/fsp.js')
+const path                = require('path')
+const randomFs            = require('random-fs')
 
 describe('directory-files', function() {
     const directory = path.resolve(__dirname, 'temp');
