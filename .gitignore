@@ -134,3 +134,5 @@ $RECYCLE.BIN/
 
 ### Tests Temp Directory
 tests/temp
+
+.nyc_output
